@@ -102,8 +102,8 @@ public class WordCount extends Configured implements Tool {
         JobConf job = new JobConf(conf, WordCount.class);
 
         // Define our input path as the first command line argument and our output path as the second
-        Path in = new Path("data/mapred/input");
-        Path out = new Path("data/mapred/output");
+        Path in = new Path("data/wordcount/input/mapred");
+        Path out = new Path("data/wordcount/output/mapred");
 
         // Create File Input/Output formats for these paths (in the job)
         FileInputFormat.setInputPaths(job, in);
