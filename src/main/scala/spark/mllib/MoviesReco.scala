@@ -1,4 +1,4 @@
-package spark.training
+package spark.mllib
 
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.recommendation.{ALS, Rating}

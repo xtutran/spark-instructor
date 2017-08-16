@@ -1,4 +1,4 @@
-package spark.training
+package spark.mllib
 
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{DataFrame, SQLContext, SaveMode}
