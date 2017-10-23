@@ -69,6 +69,19 @@
     </properties>
 
     <dependencies>
+        <!-- Fixes -->
+        <!-- Hive add old guava class to its jar. grrrr! -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>15.0</version>
+        </dependency>
+        <!-- Fix snappy on MacOS X with JDK 7 -->
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+            <version>1.0.5</version>
+        </dependency>
         <!-- SPARK -->
         <dependency>
             <groupId>org.apache.spark</groupId>
@@ -106,53 +119,78 @@
             <version>1.4.0</version>
             <scope>${scope.deploy}</scope>
         </dependency>
-        <!--<dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-graphx_${scala.dep.version}</artifactId>
-            <version>${spark.version}</version>
-            <scope>${scope.deploy}</scope>
-        </dependency>-->
-        <!--<dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-tags_${scala.dep.version}</artifactId>
-            <version>${spark.version}</version>
-            <scope>${scope.deploy}</scope>
-        </dependency>-->
-
-        <!-- Hadoop -->
-        <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-common -->
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-            <version>${hadoop.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-core -->
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
-            <version>2.6.0-mr1-cdh5.5.1</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-hdfs -->
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-hdfs</artifactId>
-            <version>${hadoop.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-mapreduce-client-core -->
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-mapreduce-client-core</artifactId>
-            <version>${hadoop.version}</version>
-        </dependency>
-
         <!-- CONFIG -->
         <dependency>
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>
             <version>1.2.1</version>
+        </dependency>
+        <!-- AVRO/PARQUET -->
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.7.6-cdh5.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro-mapred</artifactId>
+            <version>1.7.6-cdh5.4.1</version>
+            <classifier>hadoop2</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mortbay.jetty</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>parquet-avro</artifactId>
+            <version>1.5.0-cdh5.4.1</version>
+        </dependency>
+        <!-- Scalaz -->
+        <dependency>
+            <groupId>org.scalaz</groupId>
+            <artifactId>scalaz-core_${scala.dep.version}</artifactId>
+            <version>7.1.0</version>
+        </dependency>
+        <!-- JSON -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson-databind.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-scala_${scala.dep.version}</artifactId>
+            <version>${jackson-databind.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+        <!-- CSV -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>3.3</version>
+        </dependency>
+        <!-- COBOL -->
+        <dependency>
+            <groupId>net.sf.JRecord</groupId>
+            <artifactId>JRecord</artifactId>
+            <version>0.80</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.cb2xml</groupId>
+            <artifactId>cb2xml</artifactId>
+            <version>0.95.4</version>
         </dependency>
         <!-- Stats -->
         <dependency>
@@ -176,11 +214,31 @@
             <artifactId>joda-convert</artifactId>
             <version>1.7</version>
         </dependency>
+        <!-- Hive -->
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-jdbc</artifactId>
+            <version>1.1.0-cdh5.4.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- CLI -->
+        <dependency>
+            <groupId>com.github.scopt</groupId>
+            <artifactId>scopt_2.10</artifactId>
+            <version>3.3.0</version>
+        </dependency>
         <!-- Logs -->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
+        </dependency>
+        <!-- Tests -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
@@ -194,32 +252,175 @@
             <version>1.12.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.julien-truffaut</groupId>
+            <artifactId>monocle-core_${scala.dep.version}</artifactId>
+            <version>${monocle.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.julien-truffaut</groupId>
+            <artifactId>monocle-generic_${scala.dep.version}</artifactId>
+            <version>${monocle.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.julien-truffaut</groupId>
+            <artifactId>monocle-macro_${scala.dep.version}</artifactId>
+            <version>${monocle.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!--&lt;!&ndash; SPARK &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.spark</groupId>-->
+            <!--<artifactId>spark-core_${scala.dep.version}</artifactId>-->
+            <!--<version>${spark.version}</version>-->
+            <!--<scope>${scope.deploy}</scope>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>servlet-api</artifactId>-->
+                    <!--<groupId>javax.servlet</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.spark</groupId>-->
+            <!--<artifactId>spark-sql_${scala.dep.version}</artifactId>-->
+            <!--<version>${spark.version}</version>-->
+            <!--<scope>${scope.deploy}</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.spark</groupId>-->
+            <!--<artifactId>spark-hive_${scala.dep.version}</artifactId>-->
+            <!--<version>${spark.version}</version>-->
+            <!--<scope>${scope.deploy}</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.spark</groupId>-->
+            <!--<artifactId>spark-mllib_${scala.dep.version}</artifactId>-->
+            <!--<version>${spark.version}</version>-->
+            <!--<scope>${scope.deploy}</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.databricks</groupId>-->
+            <!--<artifactId>spark-csv_${scala.dep.version}</artifactId>-->
+            <!--<version>1.4.0</version>-->
+            <!--<scope>${scope.deploy}</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-graphx_${scala.dep.version}</artifactId>
+            <version>${spark.version}</version>
+            <scope>${scope.deploy}</scope>
+        </dependency>-->
+        <!--<dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-tags_${scala.dep.version}</artifactId>
+            <version>${spark.version}</version>
+            <scope>${scope.deploy}</scope>
+        </dependency>-->
 
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala.version}</version>
-        </dependency>
+        <!-- Hadoop -->
+        <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-common -->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.hadoop</groupId>-->
+            <!--<artifactId>hadoop-common</artifactId>-->
+            <!--<version>${hadoop.version}</version>-->
+        <!--</dependency>-->
 
-        <!-- Test -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-tools.testing</groupId>
-            <artifactId>specs</artifactId>
-            <version>1.6.2.2_1.5.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest</artifactId>
-            <version>1.2</version>
-            <scope>test</scope>
-        </dependency>
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-core &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.hadoop</groupId>-->
+            <!--<artifactId>hadoop-core</artifactId>-->
+            <!--<version>2.6.0-mr1-cdh5.5.1</version>-->
+        <!--</dependency>-->
+
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-hdfs &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.hadoop</groupId>-->
+            <!--<artifactId>hadoop-hdfs</artifactId>-->
+            <!--<version>${hadoop.version}</version>-->
+        <!--</dependency>-->
+
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-mapreduce-client-core &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.hadoop</groupId>-->
+            <!--<artifactId>hadoop-mapreduce-client-core</artifactId>-->
+            <!--<version>${hadoop.version}</version>-->
+        <!--</dependency>-->
+
+        <!-- CONFIG -->
+        <!--<dependency>-->
+            <!--<groupId>com.typesafe</groupId>-->
+            <!--<artifactId>config</artifactId>-->
+            <!--<version>1.2.1</version>-->
+        <!--</dependency>-->
+        <!--&lt;!&ndash; Stats &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>com.twitter</groupId>-->
+            <!--<artifactId>algebird-core_${scala.dep.version}</artifactId>-->
+            <!--<version>${algebird.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.tdunning</groupId>-->
+            <!--<artifactId>t-digest</artifactId>-->
+            <!--<version>${t-digest.version}</version>-->
+        <!--</dependency>-->
+        <!--&lt;!&ndash; Time &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>joda-time</groupId>-->
+            <!--<artifactId>joda-time</artifactId>-->
+            <!--<version>${joda-time.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.joda</groupId>-->
+            <!--<artifactId>joda-convert</artifactId>-->
+            <!--<version>1.7</version>-->
+        <!--</dependency>-->
+        <!--&lt;!&ndash; Logs &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>log4j</groupId>-->
+            <!--<artifactId>log4j</artifactId>-->
+            <!--<version>1.2.17</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.scalatest</groupId>-->
+            <!--<artifactId>scalatest_${scala.dep.version}</artifactId>-->
+            <!--<version>2.2.2</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.scalacheck</groupId>-->
+            <!--<artifactId>scalacheck_${scala.dep.version}</artifactId>-->
+            <!--<version>1.12.2</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.scala-lang</groupId>-->
+            <!--<artifactId>scala-library</artifactId>-->
+            <!--<version>${scala.version}</version>-->
+        <!--</dependency>-->
+
+        <!--&lt;!&ndash; Test &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>junit</groupId>-->
+            <!--<artifactId>junit</artifactId>-->
+            <!--<version>4.8.1</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.scala-tools.testing</groupId>-->
+            <!--<artifactId>specs</artifactId>-->
+            <!--<version>1.6.2.2_1.5.0</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.scalatest</groupId>-->
+            <!--<artifactId>scalatest</artifactId>-->
+            <!--<version>1.2</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>
