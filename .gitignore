@@ -1,3 +1,8 @@
 .idea/*
 target/*
 spark-tutor.iml
+bin/*
+.settings/*
+.cache-main
+.classpath
+.project
