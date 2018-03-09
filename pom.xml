@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>spark</groupId>
-    <artifactId>spark-instructor</artifactId>
+    <artifactId>spark-tutor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>Spark Example</description>
@@ -34,6 +34,10 @@
             <id>extra-jars</id>
             <url>file://${basedir}/lib</url>
         </repository>
+        <repository>
+            <id>conjars.org</id>
+            <url>http://conjars.org/repo</url>
+        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -47,8 +51,10 @@
         <java.version>1.7</java.version>
         <scala.version>2.10.4</scala.version>
         <scala.dep.version>2.10</scala.dep.version>
-        <hadoop.version>2.6.0-cdh5.5.1</hadoop.version>
-        <spark.version>1.5.0-cdh5.5.1</spark.version>
+        <cdh.version>cdh5.8.4</cdh.version>
+        <hadoop.version>2.6.0</hadoop.version>
+        <spark.version>1.6.0</spark.version>
+        <!--<spark.version>2.0.0</spark.version>-->
         <algebird.version>0.8.2</algebird.version>
         <t-digest.version>3.0</t-digest.version>
         <junit.version>4.11</junit.version>
@@ -73,7 +79,7 @@
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_${scala.dep.version}</artifactId>
-            <version>${spark.version}</version>
+            <version>${spark.version}-${cdh.version}</version>
             <scope>${scope.deploy}</scope>
             <exclusions>
                 <exclusion>
@@ -82,30 +88,43 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_${scala.dep.version}</artifactId>
-            <version>${spark.version}</version>
+            <version>${spark.version}-${cdh.version}</version>
             <scope>${scope.deploy}</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-hive_${scala.dep.version}</artifactId>
-            <version>${spark.version}</version>
+            <version>${spark.version}-${cdh.version}</version>
             <scope>${scope.deploy}</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_${scala.dep.version}</artifactId>
-            <version>${spark.version}</version>
+            <version>${spark.version}-${cdh.version}</version>
             <scope>${scope.deploy}</scope>
         </dependency>
+
         <dependency>
             <groupId>com.databricks</groupId>
             <artifactId>spark-csv_${scala.dep.version}</artifactId>
             <version>1.4.0</version>
             <scope>${scope.deploy}</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.mongodb.spark/mongo-spark-connector -->
+        <dependency>
+            <groupId>org.mongodb.spark</groupId>
+            <artifactId>mongo-spark-connector_${scala.dep.version}</artifactId>
+            <version>1.1.0</version>
+            <scope>${scope.deploy}</scope>
+        </dependency>
+
         <!--<dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-graphx_${scala.dep.version}</artifactId>
@@ -124,29 +143,42 @@
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
-            <version>${hadoop.version}</version>
+            <version>${hadoop.version}-${cdh.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-core -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-core</artifactId>
-            <version>2.6.0-mr1-cdh5.5.1</version>
+            <version>${hadoop.version}-mr1-${cdh.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-hdfs -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-hdfs</artifactId>
-            <version>${hadoop.version}</version>
+            <version>${hadoop.version}-${cdh.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-mapreduce-client-core -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-mapreduce-client-core</artifactId>
-            <version>${hadoop.version}</version>
+            <version>${hadoop.version}-${cdh.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}-${cdh.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
+        <!--<dependency>-->
+        <!--<groupId>org.mongodb</groupId>-->
+        <!--<artifactId>mongo-java-driver</artifactId>-->
+        <!--<version>3.2.2</version>-->
+        <!--</dependency>-->
 
         <!-- CONFIG -->
         <dependency>
@@ -223,203 +255,44 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>src/main/scala</sourceDirectory>
+        <testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${basedir}/src/main/scala</source>
-                                <source>${basedir}/src/main/java</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>3.2.1</version>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <version>2.15.0</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>compile</goal>
                             <goal>testCompile</goal>
                         </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <args>
-                        <arg>-target:jvm-${java.version}</arg>
-                    </args>
-                    <javacArgs>
-                        <javacArg>-source</javacArg>
-                        <javacArg>${java.version}</javacArg>
-                        <javacArg>-target</javacArg>
-                        <javacArg>${java.version}</javacArg>
-                    </javacArgs>
-                    <scalaVersion>${scala.version}</scalaVersion>
-                    <scalaCompatVersion>${scala.dep.version}</scalaCompatVersion>
-                    <recompileMode>incremental</recompileMode>
-                    <ccTestGoals>scalatest:test</ccTestGoals>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.plugin}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.plugin}</version>
-                <executions>
-                    <execution>
-                        <id>attach-source</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>${maven-shade-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
                         <configuration>
-                            <minimizeJar>false</minimizeJar>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.google</pattern>
-                                    <shadedPattern>shaded.com.google</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.fasterxml.jackson</pattern>
-                                    <shadedPattern>shaded.com.fasterxml.jackson</shadedPattern>
-                                </relocation>
-                            </relocations>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>full</shadedClassifierName>
+                            <args>
+                                <arg>-make:transitive</arg>
+                                <arg>-dependencyfile</arg>
+                                <arg>${project.build.directory}/.scala_dependencies</arg>
+                            </args>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <!-- disable surefire -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.7</version>
+                <version>2.6</version>
                 <configuration>
-                    <skipTests>true</skipTests>
+                    <useFile>false</useFile>
+                    <disableXmlReport>true</disableXmlReport>
+                    <!-- If you have classpath issue like NoDefClassError,... -->
+                    <!-- useManifestOnlyJar>false</useManifestOnlyJar -->
+                    <includes>
+                        <include>**/*Test.*</include>
+                        <include>**/*Suite.*</include>
+                    </includes>
                 </configuration>
-            </plugin>
-            <!-- enable scalatest -->
-            <plugin>
-                <groupId>org.scalatest</groupId>
-                <artifactId>scalatest-maven-plugin</artifactId>
-                <version>1.0</version>
-                <configuration>
-                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                    <junitxml>.</junitxml>
-                    <filereports>WDF TestSuite.txt</filereports>
-                    <stdout>D</stdout>
-                    <argLine>-Xms512m -XX:PermSize=128m</argLine>
-                    <!--<skipTests>true</skipTests>-->
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>test</id>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.scoverage</groupId>
-                <artifactId>scoverage-maven-plugin</artifactId>
-                <version>${scoverage-maven-plugin.version}</version>
-                <configuration>
-                    <highlighting>true</highlighting>
-                    <scalaVersion>${scala.version}</scalaVersion>
-                    <minimumCoverage>80</minimumCoverage>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
-        <!--<sourceDirectory>src/main/scala</sourceDirectory>-->
-        <!--<testSourceDirectory>src/test/scala</testSourceDirectory>-->
-        <!--<plugins>-->
-        <!--<plugin>-->
-        <!--<groupId>org.scala-tools</groupId>-->
-        <!--<artifactId>maven-scala-plugin</artifactId>-->
-        <!--<version>2.15.0</version>-->
-        <!--<executions>-->
-        <!--<execution>-->
-        <!--<goals>-->
-        <!--<goal>compile</goal>-->
-        <!--<goal>testCompile</goal>-->
-        <!--</goals>-->
-        <!--<configuration>-->
-        <!--<args>-->
-        <!--<arg>-make:transitive</arg>-->
-        <!--<arg>-dependencyfile</arg>-->
-        <!--<arg>${project.build.directory}/.scala_dependencies</arg>-->
-        <!--</args>-->
-        <!--</configuration>-->
-        <!--</execution>-->
-        <!--</executions>-->
-        <!--</plugin>-->
-        <!--<plugin>-->
-        <!--<groupId>org.apache.maven.plugins</groupId>-->
-        <!--<artifactId>maven-surefire-plugin</artifactId>-->
-        <!--<version>2.6</version>-->
-        <!--<configuration>-->
-        <!--<useFile>false</useFile>-->
-        <!--<disableXmlReport>true</disableXmlReport>-->
-        <!--&lt;!&ndash; If you have classpath issue like NoDefClassError,... &ndash;&gt;-->
-        <!--&lt;!&ndash; useManifestOnlyJar>false</useManifestOnlyJar &ndash;&gt;-->
-        <!--<includes>-->
-        <!--<include>**/*Test.*</include>-->
-        <!--<include>**/*Suite.*</include>-->
-        <!--</includes>-->
-        <!--</configuration>-->
-        <!--</plugin>-->
-        <!--</plugins>-->
     </build>
 </project>
