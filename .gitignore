@@ -1,4 +1,5 @@
 .idea/*
 target/*
-
+src/test/resources/*
 spark-tutor.iml
+src/test/resources/doc_1.json

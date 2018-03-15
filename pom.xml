@@ -180,6 +180,20 @@
         <!--<version>3.2.2</version>-->
         <!--</dependency>-->
 
+        <!-- https://mvnrepository.com/artifact/org.tsers.zeison/zeison -->
+        <dependency>
+            <groupId>org.tsers.zeison</groupId>
+            <artifactId>zeison_2.10</artifactId>
+            <version>0.7.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.github.scopt/scopt -->
+        <dependency>
+            <groupId>com.github.scopt</groupId>
+            <artifactId>scopt_${scala.dep.version}</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+
         <!-- CONFIG -->
         <dependency>
             <groupId>com.typesafe</groupId>
