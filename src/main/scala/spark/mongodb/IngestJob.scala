@@ -87,12 +87,19 @@ object IngestJob {
     sc.hadoopConfiguration.set("parquet.enable.summary-metadata", "false")
 
     val readConfig = ReadConfig(Map(
+      "spark.mongodb.input.uri" -> "",
+      "spark.mongodb.input.database" -> "",
+      "spark.mongodb.input.collection" -> "",
       "spark.mongodb.input.partitioner" -> "MongoPaginateByCountPartitioner"
     ))
 
     val writeConfig = WriteConfig(Map(
+      "spark.mongodb.output.uri" -> "",
+      "spark.mongodb.output.database" -> "",
+      "spark.mongodb.output.collection" -> ""
     ))
 
+    val df = MongoSpark.load(sqlContext)
     df.printSchema()
 
     // infer schema
